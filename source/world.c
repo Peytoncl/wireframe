@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "../headers/world.h"
 
 Object objects[MAX_OBJECTS] = 
@@ -6,8 +8,8 @@ Object objects[MAX_OBJECTS] =
 
         {
 
-            {-50, -50, 50},
-            {50, -50, 50},
+            {-50, 50, 50},
+            {50, 50, 50},
             {50, 50, -50},
             {-50, 50, -50},
             {-50, -50, 50},
@@ -29,7 +31,7 @@ Object objects[MAX_OBJECTS] =
 
         {0, 0, 0},
 
-        {1, 0, 1},
+        {0.5, 0.5, 1},
 
         1
 
@@ -63,10 +65,28 @@ double Distance(Vector3 v1, Vector3 v2)
     return dx * dx + dy * dy + dz * dz;
 }
 
-Vector2 WorldToScreen(Vector3 pWorld, Vector3 cameraPos)
+Vector2 WorldToScreen(Vector3 pWorld, Vector3 cameraPos, Angle angle)
 {
     
     Vector3 pCamera = (Vector3){pWorld.x - cameraPos.x, pWorld.y - cameraPos.y, pWorld.z - cameraPos.z};
+
+    double cosYaw = cos(angle.y);
+    double sinYaw = sin(angle.y);
+
+    double tempX = pCamera.x * cosYaw + pCamera.z * sinYaw;
+    double tempZ = -pCamera.x * sinYaw + pCamera.z * cosYaw;
+
+    pCamera.x = tempX;
+    pCamera.z = tempZ;
+
+    double cosPitch = cos(angle.x);
+    double sinPitch = sin(angle.x);
+
+    double tempY = pCamera.y * cosPitch - pCamera.z * sinPitch;
+    tempZ = pCamera.y * sinPitch + pCamera.z * cosPitch;
+
+    pCamera.y = tempY;
+    pCamera.z = tempZ;
 
     double xProj = pCamera.x / pCamera.z;
     double yProj = pCamera.y / pCamera.z;

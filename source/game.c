@@ -15,10 +15,14 @@
 
 bool keys[KEY_COUNT];
 
-float CENTER_X = (WINDOW_W / 2);
-float CENTER_Y = (WINDOW_H / 2);
+int CENTER_X = (int)(WINDOW_W / 2);
+int CENTER_Y = (int)(WINDOW_H / 2);
 
 Player player = { {0, 0, 0}, {0, 0} };
+
+Vector2 lastMouse;
+
+double sensitivity = 0.01;
 
 void init()
 {
@@ -35,6 +39,11 @@ void init()
   glDisable(GL_DEPTH_TEST);
 
   glViewport(0, 0, WINDOW_W, WINDOW_H);
+
+  lastMouse.x = CENTER_X;
+  lastMouse.y = CENTER_Y;
+
+  SetCursorPos(CENTER_X, CENTER_Y);
 }
 
 void display() 
@@ -55,8 +64,8 @@ void display()
       Vector3 pWorld = Add(objects[i].position, objects[i].vertices[(int)objects[i].edges[e].x]);
       Vector3 pWorld1 = Add(objects[i].position, objects[i].vertices[(int)objects[i].edges[e].y]);
 
-      Vector2 screenPoint = WorldToScreen(pWorld, player.position);
-      Vector2 screenPoint1 = WorldToScreen(pWorld1, player.position);
+      Vector2 screenPoint = WorldToScreen(pWorld, player.position, player.angle);
+      Vector2 screenPoint1 = WorldToScreen(pWorld1, player.position, player.angle);
 
       glVertex2d(screenPoint.x, screenPoint.y);
       glVertex2d(screenPoint1.x, screenPoint1.y);
@@ -80,30 +89,43 @@ void keyUp(unsigned char key, int x, int y)
   keys[key] = false; 
 }
 
+double speed = 0.025;
+
 void update()
 {
-  
-  if (keys['a'])
-  {
-    player.position.x += 0.025;
-  }
+  double forwardX = sin(player.angle.y);
+  double forwardZ = -cos(player.angle.y);
 
-  if (keys['d'])
-  {
-    player.position.x -= 0.025;
-  }
+  double rightX = cos(player.angle.y);
+  double rightZ = sin(player.angle.y);
 
-  if (keys['w'])
-  {
-    player.position.z -= 0.025;
-  }
-  
-  if (keys['s'])
-  {
-    player.position.z += 0.025;
-  }
+  double moveX = 0.0;
+  double moveZ = 0.0;
+
+  if (keys['w']) { moveX += forwardX; moveZ += forwardZ; }
+  if (keys['s']) { moveX -= forwardX; moveZ -= forwardZ; }
+
+  if (keys['a']) { moveX += rightX; moveZ += rightZ; }
+  if (keys['d']) { moveX -= rightX; moveZ -= rightZ; }
+
+  player.position.x += moveX * speed;
+  player.position.z += moveZ * speed;
 
   glutPostRedisplay();
+}
+
+void mouseMove(int x, int y)
+{
+  int deltaX = x - lastMouse.x;
+  int deltaY = y - lastMouse.y;
+
+  player.angle.y -= deltaX * sensitivity;
+  player.angle.x += deltaY * sensitivity;
+
+  lastMouse.x = x;
+  lastMouse.y = y;
+
+  //SetCursorPos(CENTER_X, CENTER_Y);
 }
 
 void windowResize(int width, int height)
@@ -132,6 +154,9 @@ int main(int argc, char** argv)
 
   glutKeyboardFunc(keyDown);  
   glutKeyboardUpFunc(keyUp);  
+
+  glutPassiveMotionFunc(mouseMove);
+  glutMotionFunc(mouseMove);
 
   glutReshapeFunc(windowResize);
 

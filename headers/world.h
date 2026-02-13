@@ -44,6 +44,6 @@ Vector3 Subtract(Vector3 v1, Vector3 v2);
 
 double Distance(Vector3 v1, Vector3 v2);
 
-Vector2 WorldToScreen(Vector3 pWorld, Vector3 cameraPos);
+Vector2 WorldToScreen(Vector3 pWorld, Vector3 cameraPos, Angle angle);
 
 #endif
