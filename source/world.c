@@ -199,10 +199,9 @@ int ClipLine(Vector3 *p0, Vector3 *p1, double nearPlane)
 }
 
 Vector2 WorldToScreen(Vector3 pWorld, Vector3 cameraPos, Angle angle)
-{
-    
+{    
     Vector3 pCamera = (Vector3){pWorld.x - cameraPos.x, pWorld.y - cameraPos.y, pWorld.z - cameraPos.z};
-
+    
     double cosYaw = cos(angle.y);
     double sinYaw = sin(angle.y);
 
@@ -220,6 +219,8 @@ Vector2 WorldToScreen(Vector3 pWorld, Vector3 cameraPos, Angle angle)
 
     pCamera.y = tempY;
     pCamera.z = tempZ;
+
+    if (pCamera.z > 0.05) return (Vector2){9999, 9999};
 
     double xProj = pCamera.x / pCamera.z;
     double yProj = pCamera.y / pCamera.z;

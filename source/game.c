@@ -73,6 +73,8 @@ void display()
       Vector2 screenPoint2 = WorldToScreen(pWorld2, player.position, player.angle);
       Vector2 screenPoint3 = WorldToScreen(pWorld3, player.position, player.angle);
 
+      if (screenPoint.x == 9999 || screenPoint1.x == 9999 || screenPoint2.x == 9999 || screenPoint3.x == 9999) continue;
+
       glVertex2d(screenPoint.x, screenPoint.y);
       glVertex2d(screenPoint1.x, screenPoint1.y);
       glVertex2d(screenPoint2.x, screenPoint2.y);
@@ -100,6 +102,8 @@ void display()
 
       Vector2 screenPoint = WorldToScreen(pWorld, player.position, player.angle);
       Vector2 screenPoint1 = WorldToScreen(pWorld1, player.position, player.angle);
+
+      if (screenPoint.x == 9999 || screenPoint1.x == 9999) continue;
 
       glVertex2d(screenPoint.x, screenPoint.y);
       glVertex2d(screenPoint1.x, screenPoint1.y);

@@ -4,8 +4,8 @@
 
 #include "colors.h"
 
-#define MAX_VERTICES 64
-#define MAX_OBJECTS 64
+#define MAX_VERTICES 1000
+#define MAX_OBJECTS 1000
 
 typedef struct
 {
