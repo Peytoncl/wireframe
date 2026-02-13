@@ -8,8 +8,8 @@ Object objects[MAX_OBJECTS] =
 
         {
 
-            {-50, 50, 50},
-            {50, 50, 50},
+            {-50, -50, 50},
+            {50, -50, 50},
             {50, 50, -50},
             {-50, 50, -50},
             {-50, -50, 50},
@@ -29,9 +29,108 @@ Object objects[MAX_OBJECTS] =
 
         12,
 
+        {
+            {0, 1, 2, 3},  // top
+            {4, 5, 6, 7},  // bottom
+            {0, 1, 5, 4},  // front
+            {3, 2, 6, 7},  // back
+            {0, 3, 7, 4},  // left
+            {1, 2, 6, 5}   // right
+        },
+
+        6,
+
         {0, 0, 0},
 
         {0.5, 0.5, 1},
+
+        1
+
+    },
+
+    {
+
+        {
+
+            {-50, -50, 50},
+            {50, -50, 50},
+            {50, 50, -50},
+            {-50, 50, -50},
+            {-50, -50, 50},
+            {50, -50, 50},
+            {50, -50, -50},
+            {-50, -50, -50}
+
+        },
+
+        8,
+
+        {
+          {0, 1}, {1, 2}, {2, 3}, {3, 0},
+          {4, 5}, {5, 6}, {6, 7}, {7, 4},
+          {0, 4}, {1, 5}, {2, 6}, {3, 7}
+        },
+
+        12,
+
+        {
+            {0, 1, 2, 3},  // top
+            {4, 5, 6, 7},  // bottom
+            {0, 1, 5, 4},  // front
+            {3, 2, 6, 7},  // back
+            {0, 3, 7, 4},  // left
+            {1, 2, 6, 5}   // right
+        },
+
+        6,
+
+        {100, 0, 0},
+
+        {0.5, 0.5, 0},
+
+        1
+
+    },
+
+    {
+
+        {
+
+            {-50, -50, 50},
+            {50, -50, 50},
+            {50, 50, -50},
+            {-50, 50, -50},
+            {-50, -50, 50},
+            {50, -50, 50},
+            {50, -50, -50},
+            {-50, -50, -50}
+
+        },
+
+        8,
+
+        {
+          {0, 1}, {1, 2}, {2, 3}, {3, 0},
+          {4, 5}, {5, 6}, {6, 7}, {7, 4},
+          {0, 4}, {1, 5}, {2, 6}, {3, 7}
+        },
+
+        12,
+
+        {
+            {0, 1, 2, 3}, 
+            {4, 5, 6, 7}, 
+            {0, 1, 5, 4}, 
+            {3, 2, 6, 7}, 
+            {0, 3, 7, 4},  
+            {1, 2, 6, 5} 
+        },
+
+        6,
+
+        {-100, 0, 0},
+
+        {1, 0, 0},
 
         1
 
@@ -63,6 +162,40 @@ double Distance(Vector3 v1, Vector3 v2)
     double dz = v1.z = v2.z;
 
     return dx * dx + dy * dy + dz * dz;
+}
+
+int ClipLine(Vector3 *p0, Vector3 *p1, double nearPlane)
+{
+    if (p0->z <= nearPlane && p1->z <= nearPlane) return 0; // both points behind cam
+
+    if (p0->z <= nearPlane || p1->z <= nearPlane) // only one point behind cam
+    {
+        Vector3 inside;
+        Vector3 outside;
+
+        if (p0->z > nearPlane)
+        {
+            inside = *p0;
+            outside = *p1;
+        }
+        else
+        {
+            inside = *p1;
+            outside = *p0;
+        }
+
+        double t = (nearPlane - inside.z) / (outside.z - inside.z);
+
+        Vector3 clipped;
+        clipped.x = inside.x + t * (outside.x - inside.x);
+        clipped.y = inside.y + t * (outside.y - inside.y);
+        clipped.z = nearPlane;
+
+        if (p0->z <= nearPlane) *p0 = clipped;
+        else *p1 = clipped;
+    }
+
+    return 1;
 }
 
 Vector2 WorldToScreen(Vector3 pWorld, Vector3 cameraPos, Angle angle)

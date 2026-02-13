@@ -18,7 +18,7 @@ bool keys[KEY_COUNT];
 int CENTER_X = (int)(WINDOW_W / 2);
 int CENTER_Y = (int)(WINDOW_H / 2);
 
-Player player = { {0, 0, 0}, {0, 0} };
+Player player = { {0, 0, 300}, {0, 0} };
 
 Vector2 lastMouse;
 
@@ -26,7 +26,9 @@ double sensitivity = 0.01;
 
 void init()
 {
-  glClearColor(0, 0, 0, 0);
+  glClearColor(0.1, 0.1, 0.1, 0);
+
+  glLineWidth(3.0f);
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -50,13 +52,45 @@ void display()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glBegin(GL_LINES);
+  glBegin(GL_QUADS);
 
   for (int i = 0; i < MAX_OBJECTS; i++)
   {
     if (objects[i].active == 0) break;
 
     glColor3f(objects[i].color.r, objects[i].color.g, objects[i].color.b);
+
+    for (int e = 0; e < objects[i].faceAmount; e++)
+    {
+
+      Vector3 pWorld = Add(objects[i].position, objects[i].vertices[(int)objects[i].faces[e].x]);
+      Vector3 pWorld1 = Add(objects[i].position, objects[i].vertices[(int)objects[i].faces[e].y]);
+      Vector3 pWorld2 = Add(objects[i].position, objects[i].vertices[(int)objects[i].faces[e].z]);
+      Vector3 pWorld3 = Add(objects[i].position, objects[i].vertices[(int)objects[i].faces[e].w]);
+
+      Vector2 screenPoint = WorldToScreen(pWorld, player.position, player.angle);
+      Vector2 screenPoint1 = WorldToScreen(pWorld1, player.position, player.angle);
+      Vector2 screenPoint2 = WorldToScreen(pWorld2, player.position, player.angle);
+      Vector2 screenPoint3 = WorldToScreen(pWorld3, player.position, player.angle);
+
+      glVertex2d(screenPoint.x, screenPoint.y);
+      glVertex2d(screenPoint1.x, screenPoint1.y);
+      glVertex2d(screenPoint2.x, screenPoint2.y);
+      glVertex2d(screenPoint3.x, screenPoint3.y);
+
+    }
+
+  }
+
+  glEnd();
+
+  glBegin(GL_LINES);
+
+  for (int i = 0; i < MAX_OBJECTS; i++)
+  {
+    if (objects[i].active == 0) break;
+
+    glColor3f(0, 0, 0);
 
     for (int e = 0; e < objects[i].edgeAmount; e++)
     {
