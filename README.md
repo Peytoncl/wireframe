@@ -1,3 +1,7 @@
+3d renderer
+
+uses vertices, edges, and faces and renderes them based on their colors using simple world to screen projection
+
 all in pure c and glut 😲
 
 <img width="758" height="600" alt="image" src="https://github.com/user-attachments/assets/fb2fddde-cb9b-4bfa-8925-6e2653fe47f5" />
