@@ -15,6 +15,9 @@
 
 bool keys[KEY_COUNT];
 
+int currentWindowWidth = WINDOW_W;
+int currentWindowHeight = WINDOW_H;
+
 int CENTER_X = (int)(WINDOW_W / 2);
 int CENTER_Y = (int)(WINDOW_H / 2);
 
@@ -168,7 +171,15 @@ void mouseMove(int x, int y)
 
 void windowResize(int width, int height)
 {
-  //glutReshapeWindow(WINDOW_W, WINDOW_H);
+  currentWindowHeight = height;
+  currentWindowWidth = width;
+
+  CENTER_X = (int)currentWindowWidth * 0.5;
+  CENTER_Y = (int)currentWindowHeight * 0.5;
+
+  glViewport(0, 0, width, height);
+
+  glLoadIdentity();
 }
 
 int main(int argc, char** argv) 
